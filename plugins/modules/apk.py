@@ -275,17 +275,22 @@ def install_packages(module, names, state, world):
     if not to_install and not upgrade:
         module.exit_json(changed=False, msg="package(s) already installed")
     packages = to_install + to_upgrade
+
+    run_kwargs = {"check_rc": False}
+
     if upgrade:
         if module.check_mode:
             cmd = APK_PATH + ["add", "--upgrade", "--simulate"] + packages
         else:
             cmd = APK_PATH + ["add", "--upgrade"] + packages
+            run_kwargs["data"] = "y"
     else:
         if module.check_mode:
             cmd = APK_PATH + ["add", "--simulate"] + packages
         else:
             cmd = APK_PATH + ["add"] + packages
-    rc, stdout, stderr = module.run_command(cmd, check_rc=False)
+            run_kwargs["data"] = "y"
+    rc, stdout, stderr = module.run_command(cmd, **run_kwargs)
     packagelist = parse_for_packages(stdout)
     if rc != 0:
         module.fail_json(msg=f"failed to install {packages}", stdout=stdout, stderr=stderr, packages=packagelist)

@@ -1,0 +1,2 @@
+bugfixes:
+  - apk - pass confirmation to ``stdin`` to prevent hanging on systems like Chimera Linux where ``apk`` runs interactively by default due to system configuration (https://github.com/ansible-collections/community.general/issues/10521).
